@@ -81,8 +81,8 @@ This repository provides two Windows builds.
 
 | Build | htslib | Source tree | Notes |
 |---|---:|---|---|
-| `falco-1.3.0-msys.zip` | No | `falco-1.3.0/` | Built from the upstream Falco 1.3.0 source tree without source changes |
-| `falco-1.3.0-ucrt64-hts.zip` | Yes | `falco-1.3.0-ucrt64-patch/` | Built with htslib enabled; requires small Windows/UCRT64 compatibility fixes |
+| `falco-1.3.0-msys.zip` | No | `falco-1.3.0/` | Built without htslib; includes only the shared Windows filename fix described below |
+| `falco-1.3.0-ucrt64-hts.zip` | Yes | `falco-1.3.0-ucrt64-patch/` | Built with htslib enabled; includes the same filename fix plus small UCRT64 compatibility fixes |
 
 Use the non-htslib build for ordinary FASTQ work. Use the htslib build only
 when you need the htslib-enabled functionality.
@@ -135,17 +135,25 @@ The executable is created as:
 falco-1.3.0-ucrt64-patch/falco.exe
 ```
 
+## Filename fix for Windows compatibility
+
+Both source trees contain one filename change from upstream Falco 1.3.0:
+
+| Source trees | Change | Reason |
+|---|---|---|
+| `falco-1.3.0/` and `falco-1.3.0-ucrt64-patch/` | Renamed `src/aux.hpp` to `src/falco_aux.hpp`, then updated the include and build-file references in `src/FalcoConfig.hpp`, `Makefile.am`, and `Makefile.in` | Windows treats `AUX` as a reserved device name, so `aux.hpp` is not a safe filename on Windows |
+
 ## UCRT64 Compatibility Patch
 
 The htslib-enabled build uses MSYS2-UCRT64. The upstream Falco 1.3.0 source did
-not compile there unchanged, so `falco-1.3.0-ucrt64-patch/` contains a small
-compatibility patch.
+not compile there unchanged, even after the shared filename fix, so
+`falco-1.3.0-ucrt64-patch/` contains additional compatibility changes.
 
-The patch is limited to Windows/UCRT64 build issues:
+These extra changes are limited to Windows/UCRT64 build issues:
 
 | File | Change | Reason |
 |---|---|---|
-| `src/FalcoConfig.hpp` | Changed `read_step` and `threads` from `size_t` to `unsigned long` | Reuses the existing `OptionParser` overload instead of adding a new parser overload |
+| `src/FalcoConfig.hpp` | Changed `read_step` and `threads` from `size_t` to `unsigned long` | Fixes the UCRT64 compile error where `OptionParser::add_opt()` has no overload that accepts `size_t&` |
 | `src/falco.cpp` | Replaced `mkdir(path, mode)` with `std::filesystem::create_directories()` | UCRT64 does not provide the POSIX `mkdir(path, mode)` signature |
 | `src/Module.cpp` | Replaced `std::max(1ul, ...)` with `std::max(std::size_t{1}, ...)` | Avoids a type mismatch between `unsigned long` and `std::size_t` |
 | `src/OptionParser.cpp` | Replaced `std::min(2ul, options.size())` with `std::min(std::size_t{2}, options.size())` | Avoids a type mismatch between `unsigned long` and `std::size_t` |
