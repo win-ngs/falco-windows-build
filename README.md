@@ -1,48 +1,43 @@
-# falco-windows-build
+# Falco for Windows: Unofficial Community Builds
 
-This repository provides pre-compiled Windows binaries of [Falco](https://github.com/smithlabcode/falco) 1.3.0.
+This repository provides unofficial pre-compiled Windows binaries for
+[Falco](https://github.com/smithlabcode/falco) 1.3.0.
 
-These are unofficial Windows builds. They are not produced, endorsed, or
-supported by the upstream [Falco](https://github.com/smithlabcode/falco) project.
+Falco is a command-line quality control tool for next-generation sequencing
+read files. The upstream Falco project is primarily built for Unix-like
+environments. This repository distributes ready-to-run `falco.exe` packages for
+Windows users.
 
-Falco is a command-line quality control tool for sequencing read files such as FASTQ files. The upstream project is built mainly in Unix-like environments. This repository packages `falco.exe` so Windows users can download and run it more easily.
+These builds are not produced, endorsed, or supported by the upstream Falco
+project. For Falco itself, see the upstream repository:
 
-The release ZIP files include `falco.exe` and the MSYS2 DLLs required at runtime. You do not need to add MSYS2 to your Windows `PATH` just to run the downloaded binaries.
+https://github.com/smithlabcode/falco
 
 ## Download
 
-Download the Windows binaries from this release page:
+Download the Windows ZIP files from the release page:
 
 https://github.com/tus-kondolab/falco-windows-build/releases/tag/v1.3.0-windows
 
-Direct downloads:
+| File | Recommended for |
+|---|---|
+| [`falco-1.3.0-msys.zip`](https://github.com/tus-kondolab/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-msys.zip) | Most users processing FASTQ or gzip-compressed FASTQ files |
+| [`falco-1.3.0-ucrt64-hts.zip`](https://github.com/tus-kondolab/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-ucrt64-hts.zip) | Users who need htslib-enabled input support |
 
-- [`falco-1.3.0-msys.zip`](https://github.com/tus-kondolab/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-msys.zip)
-- [`falco-1.3.0-ucrt64-hts.zip`](https://github.com/tus-kondolab/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-ucrt64-hts.zip)
+If you are unsure which one to use, start with `falco-1.3.0-msys.zip`.
 
-## Which Build Should I Use?
+## How to Use
 
-If you only need to analyze FASTQ or gzip-compressed FASTQ files, start with `falco-1.3.0-msys.zip`.
-
-If you need htslib-backed input support, for example for BAM/HTS-related workflows, use `falco-1.3.0-ucrt64-hts.zip`.
-
-| ZIP file | Build environment | htslib | Recommended use |
-|---|---|---:|---|
-| `falco-1.3.0-msys.zip` | MSYS2-MSYS | No | Simple FASTQ / gzip FASTQ use |
-| `falco-1.3.0-ucrt64-hts.zip` | MSYS2-UCRT64 | Yes | Workflows that need htslib support |
-
-## How To Run Falco On Windows
-
-1. Download one of the ZIP files from the release page.
+1. Download one of the ZIP files.
 2. Extract the ZIP file.
-3. Open PowerShell or Command Prompt.
-4. Change into the extracted folder.
+3. Open PowerShell.
+4. Move into the extracted folder.
 5. Run `falco.exe`.
 
-PowerShell example:
+Example:
 
 ```powershell
-cd C:\path\to\falco-1.3.0-msys
+cd C:\Users\you\Downloads\falco-1.3.0-msys
 .\falco.exe --version
 .\falco.exe --help
 ```
@@ -50,47 +45,55 @@ cd C:\path\to\falco-1.3.0-msys
 Analyze a FASTQ file:
 
 ```powershell
-.\falco.exe C:\path\to\sample.fastq.gz
+.\falco.exe C:\data\sample.fastq.gz
 ```
 
-Write output files into a specific directory:
+Write output files to a specific folder:
 
 ```powershell
-.\falco.exe --outdir C:\path\to\output C:\path\to\sample.fastq.gz
+.\falco.exe --outdir C:\data\falco-output C:\data\sample.fastq.gz
 ```
 
-Keep the included DLL files in the same folder as `falco.exe`. If you move only `falco.exe` without the DLLs, Windows may not be able to start it.
+Keep the extracted files together. Do not move only `falco.exe` to another
+folder, because the other files in the ZIP are needed for the program to start.
 
-## What Is Included In The ZIP Files?
+## Files in the ZIP
 
-Each ZIP file contains:
+After extracting a ZIP file, you will see `falco.exe` and several `.dll` files.
 
-- `falco.exe`
-- Runtime DLLs reported by `ldd`
+| File type | What it is | What you should do |
+|---|---|---|
+| `falco.exe` | The Falco program | Run this file from PowerShell or Command Prompt |
+| `*.dll` files | Support files needed by `falco.exe` | Keep them in the same folder as `falco.exe` |
 
-The ZIP files do not include Windows system DLLs such as `KERNEL32.DLL`, `KERNELBASE.dll`, `ucrtbase.dll`, or similar DLLs provided by Windows itself.
+You do not need to open the `.dll` files. They are included so that Windows can
+start `falco.exe`. If they are deleted or moved away from `falco.exe`, Falco may
+fail to start.
 
-Third-party runtime DLL license information is summarized in [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt).
+There is no installer. To remove this Windows build, delete the extracted
+folder.
 
-## Repository Layout
+## Build Differences
 
-| Path | Purpose |
-|---|---|
-| `falco-1.3.0/` | Upstream Falco 1.3.0 source tree used for the MSYS2-MSYS build |
-| `falco-1.3.0-ucrt64-patch/` | UCRT64 + htslib source tree with small Windows portability fixes |
-| `falco-1.3.0-msys/` | Local release staging directory for the MSYS2-MSYS binary; ignored by Git |
-| `falco-1.3.0-ucrt64-hts/` | Local release staging directory for the UCRT64 + htslib binary; ignored by Git |
+This repository provides two Windows builds.
 
-## Building From Source
+| Build | htslib | Source tree | Notes |
+|---|---:|---|---|
+| `falco-1.3.0-msys.zip` | No | `falco-1.3.0/` | Built from the upstream Falco 1.3.0 source tree without source changes |
+| `falco-1.3.0-ucrt64-hts.zip` | Yes | `falco-1.3.0-ucrt64-patch/` | Built with htslib enabled; requires small Windows/UCRT64 compatibility fixes |
 
-You only need this section if you want to rebuild the binaries yourself.
+Use the non-htslib build for ordinary FASTQ work. Use the htslib build only
+when you need the htslib-enabled functionality.
 
-Install MSYS2 first. This repository uses two MSYS2 shell environments:
+## Building from Source
 
-- MSYS2-MSYS shell
-- MSYS2-UCRT64 shell
+You do not need to build Falco yourself if you only want to use the released
+Windows binaries. This section is for maintainers or users who want to recreate
+the builds.
 
-### Build Without htslib
+Install [MSYS2](https://www.msys2.org/) first.
+
+### Build without htslib
 
 Use the MSYS2-MSYS shell.
 
@@ -100,29 +103,23 @@ cd /c/path/to/falco-windows-build/falco-1.3.0
 make all
 ```
 
-The executable is created at:
+The executable is created as:
 
 ```text
 falco-1.3.0/falco.exe
 ```
 
-For a redistributable folder, copy `falco.exe` and the MSYS2 DLLs reported by:
-
-```sh
-ldd ./falco.exe
-```
-
-### Build With htslib
+### Build with htslib
 
 Use the MSYS2-UCRT64 shell.
 
-Install htslib if it is not already installed:
+Install htslib:
 
 ```sh
 pacman -S mingw-w64-ucrt-x86_64-htslib
 ```
 
-Then build:
+Build Falco:
 
 ```sh
 cd /c/path/to/falco-windows-build/falco-1.3.0-ucrt64-patch
@@ -130,44 +127,34 @@ cd /c/path/to/falco-windows-build/falco-1.3.0-ucrt64-patch
 make HAVE_HTSLIB=1 all
 ```
 
-The executable is created at:
+The executable is created as:
 
 ```text
 falco-1.3.0-ucrt64-patch/falco.exe
 ```
 
-For a redistributable folder, copy `falco.exe` and the UCRT64 DLLs reported by:
+## UCRT64 Compatibility Patch
 
-```sh
-ldd ./falco.exe
-```
+The htslib-enabled build uses MSYS2-UCRT64. The upstream Falco 1.3.0 source did
+not compile there unchanged, so `falco-1.3.0-ucrt64-patch/` contains a small
+compatibility patch.
 
-## Why The UCRT64 + htslib Build Needs Patches
-
-The `falco-1.3.0-msys.zip` binary is built from the upstream Falco 1.3.0 source tree without source changes.
-
-The `falco-1.3.0-ucrt64-hts.zip` binary is built with MSYS2-UCRT64 and htslib enabled. That combination required small source changes because Windows/UCRT64 differs from the assumptions made by the upstream source.
-
-The main issues were:
-
-- On Windows/UCRT64, `size_t` and `unsigned long` are different types. This can break overload resolution and template type deduction in places that compile on other platforms.
-- UCRT64 does not provide the POSIX-style `mkdir(path, mode)` function signature used by the upstream source.
-
-## UCRT64 Patch List
+The patch is limited to Windows/UCRT64 build issues:
 
 | File | Change | Reason |
 |---|---|---|
-| `falco-1.3.0-ucrt64-patch/src/FalcoConfig.hpp` | Changed `size_t read_step` and `size_t threads` to `unsigned long` | Matches the existing `OptionParser::add_opt(..., unsigned long&)` overload |
-| `falco-1.3.0-ucrt64-patch/src/falco.cpp` | Replaced `mkdir(path, mode)` with `std::filesystem::create_directories()` | UCRT64's `mkdir()` does not take the POSIX mode argument |
-| `falco-1.3.0-ucrt64-patch/src/Module.cpp` | Replaced `std::max(1ul, ...)` with `std::max(std::size_t{1}, ...)` | Avoids `unsigned long` vs `std::size_t` type mismatch errors |
-| `falco-1.3.0-ucrt64-patch/src/OptionParser.cpp` | Replaced `std::min(2ul, options.size())` with `std::min(std::size_t{2}, options.size())` | Avoids `unsigned long` vs `std::size_t` type mismatch errors |
+| `src/FalcoConfig.hpp` | Changed `read_step` and `threads` from `size_t` to `unsigned long` | Reuses the existing `OptionParser` overload instead of adding a new parser overload |
+| `src/falco.cpp` | Replaced `mkdir(path, mode)` with `std::filesystem::create_directories()` | UCRT64 does not provide the POSIX `mkdir(path, mode)` signature |
+| `src/Module.cpp` | Replaced `std::max(1ul, ...)` with `std::max(std::size_t{1}, ...)` | Avoids a type mismatch between `unsigned long` and `std::size_t` |
+| `src/OptionParser.cpp` | Replaced `std::min(2ul, options.size())` with `std::min(std::size_t{2}, options.size())` | Avoids a type mismatch between `unsigned long` and `std::size_t` |
 
-Each changed source location includes an English comment explaining the change and keeps the previous form as a commented-out reference.
+The modified source locations include comments explaining the change and keep
+the previous form as a commented-out reference.
 
 ## License
 
-Falco is distributed under the GNU General Public License version 3.
+Falco is distributed under the GNU General Public License version 3. This
+repository follows the same GPL-3.0 license. See [LICENSE](LICENSE).
 
-This repository follows the upstream GPL-3.0 license. See [LICENSE](LICENSE).
-
-Third-party DLL license information is summarized in [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt).
+Third-party license information for bundled components is summarized in
+[THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt).
