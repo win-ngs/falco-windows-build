@@ -527,7 +527,11 @@ OptionParser::help_message() const {
   }
 
   ss << endl << "Help options:" << endl;
-  for (size_t i = 0; i < std::min(2ul, options.size()); ++i)
+  // UCRT64 compatibility: use a size_t literal so std::min() receives
+  // matching argument types; 2ul is unsigned long on Windows.
+  // Previous form:
+  // for (size_t i = 0; i < std::min(2ul, options.size()); ++i)
+  for (size_t i = 0; i < std::min(std::size_t{2}, options.size()); ++i)
     ss << SPACE_BEFORE_SHORT << std::left << std::setw(max_name_len)
        << option_names[i] << SPACE_BTWN_SHRT_LNG
        << options[i].format_option_description(max_name_len +

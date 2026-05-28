@@ -264,7 +264,11 @@ sum_deviation_from_normal(const std::array<double, 101> &gc_count,
   }
   else {
     // ADS: check if we need to avoid divide-by-zero here
-    mode /= std::max(1ul, mode_duplicates);
+    // UCRT64 compatibility: use a size_t literal so std::max() receives
+    // matching argument types; 1ul is unsigned long on Windows.
+    // Previous form:
+    // mode /= std::max(1ul, mode_duplicates);
+    mode /= std::max(std::size_t{1}, mode_duplicates);
   }
 
   // We can now work out a theoretical distribution
@@ -442,7 +446,12 @@ ModuleBasicStatistics::summarize_module(FastqStats &stats) {
       total_bases_for_mean +=
         i * stats.long_read_length_freq[i - FastqStats::SHORT_READ_THRESHOLD];
   }
-  avg_read_length = total_bases_for_mean / std::max(1ul, total_sequences);
+  // UCRT64 compatibility: use a size_t literal so std::max() receives
+  // matching argument types; 1ul is unsigned long on Windows.
+  // Previous form:
+  // avg_read_length = total_bases_for_mean / std::max(1ul, total_sequences);
+  avg_read_length = total_bases_for_mean /
+                    std::max(std::size_t{1}, total_sequences);
 
   // counts bases G and C in each base position
 

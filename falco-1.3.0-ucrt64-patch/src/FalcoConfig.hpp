@@ -43,8 +43,14 @@ struct FalcoConfig {
   bool nogroup;  // disable grouping of bases for reads >50bp
   bool compressed;  // whether or not to inflate file
   bool quiet;   // suppress all progress output to terminal
-  size_t read_step;  // only process reads that are multiple of read_step
-  size_t threads;  // number of threads to read multiple files in parallel
+  // UCRT64 compatibility: use unsigned long so the existing
+  // OptionParser::add_opt(..., unsigned long&) overload can parse these
+  // values without adding a new size_t-specific overload.
+  // Previous form:
+  // size_t read_step;  // only process reads that are multiple of read_step
+  // size_t threads;  // number of threads to read multiple files in parallel
+  unsigned long read_step;  // only process reads that are multiple of read_step
+  unsigned long threads;  // number of threads to read multiple files in parallel
   std::string call; // the function call
   std::string format;  // force file format
   std::string contaminants_file;  // custom contaminants file

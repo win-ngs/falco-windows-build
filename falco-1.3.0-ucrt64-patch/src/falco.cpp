@@ -619,10 +619,23 @@ main(int argc, char *argv[]) {
         if (!falco_config.quiet)
           log_process("creating directory for output: " + outdir);
 
-        // makes directory with r and w permission
-        if (mkdir(std::data(outdir), S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+        // UCRT64 compatibility: std::filesystem::create_directories() avoids
+        // the POSIX mkdir(path, mode) overload, which MinGW/UCRT64 does not
+        // provide, while still creating the requested output directory.
+        // Previous form:
+        // // makes directory with r and w permission
+        // if (mkdir(std::data(outdir), S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+        //   std::cerr << "failed to create directory: " << outdir
+        //             << ". Make sure you have write permissions on it!\n";
+        //   return EXIT_FAILURE;
+        // }
+        std::error_code ec;
+        if (!std::filesystem::create_directories(outdir, ec)) {
           std::cerr << "failed to create directory: " << outdir
-                    << ". Make sure you have write permissions on it!\n";
+                    << ". Make sure you have write permissions on it!";
+          if (ec)
+            std::cerr << " (" << ec.message() << ")";
+          std::cerr << '\n';
           return EXIT_FAILURE;
         }
       }
