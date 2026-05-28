@@ -1,6 +1,6 @@
 # Falco for Windows: Unofficial Community Builds
 
-![Falco for Windows banner](assets/falco-for-windows-banner.png)
+![Falco for Windows banner](assets/falco-for-windows-banner.jpg)
 
 This repository provides unofficial pre-compiled Windows binaries for
 [Falco](https://github.com/smithlabcode/falco) 1.3.0.
