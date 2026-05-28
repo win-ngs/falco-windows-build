@@ -1,0 +1,28 @@
+# Normalize source files consistently in this repository.
+* text=auto eol=lf
+
+# Keep Windows command scripts in CRLF form for native tools.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Do not try to normalize binary/archive payloads.
+*.7z binary
+*.a binary
+*.dll binary
+*.exe binary
+*.gz binary
+*.ico binary
+*.jar binary
+*.jpg binary
+*.jpeg binary
+*.lib binary
+*.o binary
+*.obj binary
+*.pdf binary
+*.png binary
+*.so binary
+*.tar binary
+*.tif binary
+*.tiff binary
+*.zip binary
