@@ -81,7 +81,7 @@ This repository provides two Windows builds.
 
 | Build | htslib | Source tree | Notes |
 |---|---:|---|---|
-| `falco-1.3.0-msys.zip` | No | `falco-1.3.0/` | Built without htslib; includes only the shared Windows filename fix described below |
+| `falco-1.3.0-msys.zip` | No | `falco-1.3.0-msys-patch/` | Built without htslib; includes only the shared Windows filename fix described below |
 | `falco-1.3.0-ucrt64-hts.zip` | Yes | `falco-1.3.0-ucrt64-patch/` | Built with htslib enabled; includes the same filename fix plus small UCRT64 compatibility fixes |
 
 Use the non-htslib build for ordinary FASTQ work. Use the htslib build only
@@ -100,7 +100,7 @@ Install [MSYS2](https://www.msys2.org/) first.
 Use the MSYS2-MSYS shell.
 
 ```sh
-cd /c/path/to/falco-windows-build/falco-1.3.0
+cd /c/path/to/falco-windows-build/falco-1.3.0-msys-patch
 ./configure CXXFLAGS="-O3 -Wall"
 make all
 ```
@@ -108,7 +108,7 @@ make all
 The executable is created as:
 
 ```text
-falco-1.3.0/falco.exe
+falco-1.3.0-msys-patch/falco.exe
 ```
 
 ### Build with htslib
@@ -141,7 +141,7 @@ Both source trees contain one filename change from upstream Falco 1.3.0:
 
 | Source trees | Change | Reason |
 |---|---|---|
-| `falco-1.3.0/` and `falco-1.3.0-ucrt64-patch/` | Renamed `src/aux.hpp` to `src/falco_aux.hpp`, then updated the include and build-file references in `src/FalcoConfig.hpp`, `Makefile.am`, and `Makefile.in` | Windows treats `AUX` as a reserved device name, so `aux.hpp` is not a safe filename on Windows |
+| `falco-1.3.0-msys-patch/` and `falco-1.3.0-ucrt64-patch/` | Renamed `src/aux.hpp` to `src/falco_aux.hpp`, then updated the include and build-file references in `src/FalcoConfig.hpp`, `Makefile.am`, and `Makefile.in` | Windows treats `AUX` as a reserved device name, so `aux.hpp` is not a safe filename on Windows |
 
 ## UCRT64 Compatibility Patch
 
