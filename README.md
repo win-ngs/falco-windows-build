@@ -30,6 +30,9 @@ If you are unsure which one to use, start with `falco-1.3.0-msys.zip`.
 
 ## How to Use
 
+These Windows builds use the same command-line options as the official Falco release.  
+For detailed usage, options, and interpretation of output files,  refer to the [`official Falco documentation`](https://github.com/smithlabcode/falco).
+
 1. Download one of the ZIP files.
 2. Extract the ZIP file.
 3. Open PowerShell.
