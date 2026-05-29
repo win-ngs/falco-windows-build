@@ -19,12 +19,12 @@ https://github.com/smithlabcode/falco
 
 Download the Windows ZIP files from the release page:
 
-https://github.com/tus-kondolab/falco-windows-build/releases/tag/v1.3.0-windows
+https://github.com/win-ngs/falco-windows-build/releases/tag/v1.3.0-windows
 
 | File | Recommended for |
 |---|---|
-| [`falco-1.3.0-msys.zip`](https://github.com/tus-kondolab/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-msys.zip) | Most users processing FASTQ or gzip-compressed FASTQ files |
-| [`falco-1.3.0-ucrt64-hts.zip`](https://github.com/tus-kondolab/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-ucrt64-hts.zip) | Users who need htslib-enabled input support |
+| [`falco-1.3.0-msys.zip`](https://github.com/win-ngs/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-msys.zip) | Most users processing FASTQ or gzip-compressed FASTQ files |
+| [`falco-1.3.0-ucrt64-hts.zip`](https://github.com/win-ngs/falco-windows-build/releases/download/v1.3.0-windows/falco-1.3.0-ucrt64-hts.zip) | Users who need BAM input support through htslib |
 
 If you are unsure which one to use, start with `falco-1.3.0-msys.zip`.
 
@@ -79,13 +79,15 @@ folder.
 
 This repository provides two Windows builds.
 
-| Build | htslib | Source tree | Notes |
-|---|---:|---|---|
-| `falco-1.3.0-msys.zip` | No | `falco-1.3.0-msys-patch/` | Built without htslib; includes only the shared Windows filename fix described below |
-| `falco-1.3.0-ucrt64-hts.zip` | Yes | `falco-1.3.0-ucrt64-patch/` | Built with htslib enabled; includes the same filename fix plus small UCRT64 compatibility fixes |
+| Build | Source tree | Notes |
+|---|---|---|
+| `falco-1.3.0-msys.zip` | `falco-1.3.0-msys-patch/` | Built in MSYS2-MSYS without htslib; includes only the shared Windows filename fix described below |
+| `falco-1.3.0-ucrt64-hts.zip` | `falco-1.3.0-ucrt64-patch/` | Built in MSYS2-UCRT64 with htslib enabled; includes the same filename fix plus small UCRT64 compatibility fixes |
 
-Use the non-htslib build for ordinary FASTQ work. Use the htslib build only
-when you need the htslib-enabled functionality.
+We recommend the non-htslib build for ordinary FASTQ work. It is the more conservative
+option: apart from the shared Windows filename fix, it does not include the
+additional UCRT64 source-code compatibility changes. Use the htslib build
+only when you need BAM input support through htslib.
 
 ## Building from Source
 
@@ -93,11 +95,21 @@ You do not need to build Falco yourself if you only want to use the released
 Windows binaries. This section is for maintainers or users who want to recreate
 the builds.
 
-Install [MSYS2](https://www.msys2.org/) first.
+Install [MSYS2](https://www.msys2.org/) first. Run the package installation
+commands below in the MSYS2 shell named for each build. If `pacman` asks you to
+select packages from a group, pressing Enter accepts the default selection.
 
 ### Build without htslib
 
 Use the MSYS2-MSYS shell.
+
+Install the basic build tools and zlib development files:
+
+```sh
+pacman -S --needed base-devel gcc zlib-devel
+```
+
+Build Falco:
 
 ```sh
 cd /c/path/to/falco-windows-build/falco-1.3.0-msys-patch
@@ -115,10 +127,10 @@ falco-1.3.0-msys-patch/falco.exe
 
 Use the MSYS2-UCRT64 shell.
 
-Install htslib:
+Install the basic build tools, UCRT64 compiler, zlib, and htslib:
 
 ```sh
-pacman -S mingw-w64-ucrt-x86_64-htslib
+pacman -S --needed base-devel mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-zlib mingw-w64-ucrt-x86_64-htslib
 ```
 
 Build Falco:
